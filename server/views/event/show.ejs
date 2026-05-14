@@ -1,0 +1,194 @@
+<%- layout('layouts/boilerplate') %>
+
+    <div class="container my-5">
+
+        <div class="row mb-4">
+            <div class="col-12">
+                <img src="<%= event.imageURL || 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1350&q=80' %>"
+                    class="event-banner" alt="<%= event.title %>">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="glass-card p-4 mb-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3"
+                            style="width: 50px; height: 50px; font-size: 1.5rem;">
+                            <i class="bi bi-building"></i>
+                        </div>
+                        <div>
+                            <h2 class="fw-bold mb-0">
+                                <%= event.title %>
+                            </h2>
+                            <p class="text-muted mb-0">by <span class="fw-bold text-dark">
+                                    <%= event.organizer %>
+                                </span></p>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <% if(event.tags && event.tags.length> 0) { %>
+                            <% event.tags.forEach(tag=> { %>
+                                <span class="tag-badge">#<%= tag %></span>
+                                <% }) %>
+                                    <% } else { %>
+                                        <span class="tag-badge">#Opportunity</span>
+                                        <% } %>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <div class="info-box">
+                                <i class="bi bi-calendar-event text-danger fs-4 mb-2"></i>
+                                <h6 class="text-muted mb-0">Deadline</h6>
+                                <p class="fw-bold mb-0">
+                                    <%= new Date(event.deadline).toLocaleDateString('en-IN', { day: 'numeric' ,
+                                        month: 'short' , year: 'numeric' }) %>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="info-box">
+                                <i class="bi bi-laptop text-primary fs-4 mb-2"></i>
+                                <h6 class="text-muted mb-0">Mode</h6>
+                                <p class="fw-bold mb-0">
+                                    <%= event.mode %>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="info-box">
+                                <i class="bi bi-briefcase text-success fs-4 mb-2"></i>
+                                <h6 class="text-muted mb-0">Type</h6>
+                                <p class="fw-bold mb-0">
+                                    <%= event.type %>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 class="fw-bold">Description</h5>
+                    <p class="text-secondary" style="line-height: 1.7;">
+                        <%= event.description %>
+                    </p>
+                    <div class="mt-5 pb-1">
+                        <div class="discussion-header">
+                            <h5 class="mb-0">Frequently Asked Questions/Discussions</h5>
+                        </div>
+
+                        <div class="discussion-content">
+                            <% if (event.faqs && event.faqs.length> 0) { %>
+                                <% event.faqs.forEach(faq=> { %>
+                                    <div class="mb-4 ps-2">
+                                        <p class="mb-1"><span class="fw-bold">
+                                                <%# faq.author.username %>
+                                            </span>
+                                            <%= faq.question %>
+                                        </p>
+                                        <%# faq.replies.forEach(reply=> { %>
+                                            <!-- <div
+                                                class="ms-4 mt-2 p-3 bg-light rounded border-start border-primary border-4">
+                                                <p class="small mb-0 text-primary fw-bold">Organizer Answer</p>
+                                                <p class="small mb-0 text-muted">
+                                                    <%# reply.body %>
+                                                </p>
+                                            </div> -->
+                                            <%# }) %>
+                                    </div>
+                                    <% }) %>
+                                        <% } else { %>
+                                            <div class="empty-discussion-box">
+                                                <i class="bi bi-chat-square-text"></i>
+                                                <p class="mb-0">No post yet! Start a new discussion.</p>
+                                            </div>
+                                            <% } %>
+                        </div>
+
+                        <form action="/events/<%= event._id %>/faqs" method="POST"
+                            class="faq-input-wrapper clearfix needs-validation" novalidate>
+                            <textarea name="question" class="faq-textarea form-control"
+                                placeholder="Ask a question (be specific)" required></textarea>
+                            <div class="invalid-feedback text-start">
+                                Please enter a question before submitting.
+                            </div>
+                            <button type="submit" class="btn-minimal-enter">Enter</button>
+                        </form>
+                    </div>
+
+                    <hr class="my-4">
+                    <div class="d-flex gap-2">
+                        <a href="/events/<%= event._id %>/edit" class="btn btn-outline-dark btn-sm">
+                            <i class="bi bi-pencil-square"></i> Edit Event
+                        </a>
+                        <form action="/events/<%= event._id %>?_method=DELETE" method="POST"
+                            onsubmit="return confirm('Delete this event?');">
+                            <button class="btn btn-outline-danger btn-sm">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+
+                <div class="glass-card p-4 mb-4">
+                    <a href="<%= event.applyLink %>" target="_blank"
+                        class="btn btn-primary w-100 btn-lg mb-3 shadow-sm">
+                        Apply Now <i class="bi bi-box-arrow-up-right ms-1"></i>
+                    </a>
+                    <button class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-heart"></i> Save for Later
+                    </button>
+                </div>
+
+                <div class="glass-card p-4 mb-4 linkedin-box">
+                    <h6 class="fw-bold mb-3"><i class="bi bi-linkedin text-primary"></i> LinkedIn Post Generator</h6>
+
+                    <div class="bg-white p-3 rounded border mb-3">
+                        <p class="small text-muted mb-0 fst-italic" id="linkedin-preview">
+                            "Excited to share that I'm applying for the <%= event.title %> by <%= event.organizer %>!
+                                    Looking forward to this amazing opportunity. 🚀 #<%= event.type %> #CareerGoals"
+                        </p>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-dark flex-grow-1" onclick="copyToClipboard()">
+                            <i class="bi bi-clipboard"></i> Copy
+                        </button>
+                        <a href="https://www.linkedin.com/feed/" target="_blank" class="btn btn-sm btn-primary">
+                            <i class="bi bi-linkedin"></i> Post
+                        </a>
+                    </div>
+                </div>
+
+                <div class="glass-card p-4">
+                    <h6 class="fw-bold mb-3">Similar Events</h6>
+                    <% if (similarEvents.length> 0) { %>
+                        <% similarEvents.forEach(sim=> { %>
+                            <div class="card border-0 bg-light mb-2">
+                                <div class="card-body p-2 d-flex align-items-center">
+                                    <div class="bg-white rounded p-2 me-2 border">
+                                        <i class="bi bi-calendar-event"></i>
+                                    </div>
+                                    <div>
+                                        <p class="mb-0 fw-bold small">
+                                            <a href="/events/<%= sim._id %>" class="text-decoration-none text-dark">
+                                                <%= sim.title %>
+                                            </a>
+                                        </p>
+                                        <span class="text-muted small" style="font-size: 0.75rem;">
+                                            Ends on <%= new Date(sim.deadline).toDateString() %>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <% }) %>
+                                <% } else { %>
+                                    <p class="text-muted small">No similar events found.</p>
+                                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>

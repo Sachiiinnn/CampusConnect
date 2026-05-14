@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { MessageSquare, Send } from 'lucide-react';
+import { MessageSquare, Send, Trash2 } from 'lucide-react'; // Added Trash2
 import { eventsApi } from '../services/eventsApi';
 import { toast } from 'sonner';
+import { useAuth } from '../../auth/context/AuthContext';
 
 export function FAQSection({ event, onFaqAdded }) {
   const [question, setQuestion] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const { user, isAdmin } = useAuth(); // Extracted isAdmin
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,6 +26,17 @@ export function FAQSection({ event, onFaqAdded }) {
     }
   };
 
+  const handleDeleteFaq = async (faqId) => {
+    if (!window.confirm("Are you sure you want to delete this question?")) return;
+    try {
+      await eventsApi.deleteFaq(event._id, faqId);
+      toast.success("Question deleted");
+      if (onFaqAdded) onFaqAdded(); // Refresh the list
+    } catch (err) {
+      toast.error(err.response?.data?.message || err.response?.data?.error || "Failed to delete");
+    }
+  };
+
   return (
     <div className="mt-8 pt-8 border-t">
       <h3 className="text-xl font-semibold mb-4">Discussions & FAQs</h3>
@@ -35,11 +48,32 @@ export function FAQSection({ event, onFaqAdded }) {
             <p>No questions yet. Start a discussion!</p>
           </div>
         ) : (
-          event.faqs.map((faq, index) => (
-            <div key={faq._id || index} className="p-4 bg-muted/20 rounded-lg border">
-              <p className="font-medium">{faq.question}</p>
-            </div>
-          ))
+          event.faqs.map((faq, index) => {
+            // Check if the current user is the author of this specific FAQ
+            const isAuthor = user?.id === faq.author?._id || user?.id === faq.author;
+            const canDelete = isAdmin || isAuthor;
+
+            return (
+              <div key={faq._id || index} className="p-4 bg-muted/20 rounded-lg border relative group pr-12">
+                <p className="font-medium">{faq.question}</p>
+                {/* Optional: Show who asked the question */}
+                {faq.author && faq.author.username && (
+                  <p className="text-xs text-muted-foreground mt-1">Asked by {faq.author.username}</p>
+                )}
+                
+                {/* Delete Button */}
+                {canDelete && (
+                  <button
+                    onClick={() => handleDeleteFaq(faq._id)}
+                    className="absolute top-4 right-4 text-muted-foreground hover:text-danger opacity-0 group-hover:opacity-100 transition-opacity"
+                    title="Delete question"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+            );
+          })
         )}
       </div>
 

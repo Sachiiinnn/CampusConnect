@@ -1,0 +1,98 @@
+<%- layout("layouts/boilerplate.ejs") %>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+
+                <h3 class="mb-4 text-center">Add New Event</h3>
+
+                <form action="/events/<%=event.id%>?_method=PUT" method="POST" class="needs-validation" novalidate>
+
+                    <!-- Title -->
+                    <div class="mb-3">
+                        <label class="form-label">Title</label>
+                        <input type="text" name="event[title]" value="<%= event.title%>" class="form-control" minlength="5" maxlength="100"
+                            required>
+                        <div class="invalid-feedback">
+                            Title must be between 5–100 characters.
+                        </div>
+                    </div>
+
+                    <!-- Type -->
+                    <div class="mb-3">
+                        <label class="form-label">Type</label>
+                        <select name="event[type]" class="form-select"  required>
+                            <option value="">Choose...</option>
+                            <option value="Hackathon" <%= event.type === "Hackathon" ? "selected" : "" %>>Hackathon</option>
+                            <option value="Internship" <%= event.type === "Internship" ? "selected" : "" %>>Internship</option>
+                            <option value="Fest" <%= event.type === "Fest" ? "selected" : "" %>>Fest</option>
+                            <option value="Workshop" <%= event.type === "Workshop" ? "selected" : "" %>>Workshop</option>
+                        </select>
+                        <div class="invalid-feedback">Please select an event type.</div>
+                    </div>
+
+                    <!-- Organizer -->
+                    <div class="mb-3">
+                        <label class="form-label">Organizer</label>
+                        <input type="text" name="event[organizer]" value="<%= event.organizer%>" class="form-control" required>
+                        <div class="invalid-feedback">Organizer is required.</div>
+                    </div>
+
+                    <!-- Mode -->
+                    <div class="mb-3">
+                        <label class="form-label">Mode</label>
+                        <select name="event[mode]"  class="form-select">
+                            <option value="Online" <%= event.mode === "Online" ? "selected" : "" %>>Online</option>
+                            <option value="Offline" <%= event.mode === "Offline" ? "selected" : "" %>>Offline</option>
+                            <option value="Hybrid" <%= event.mode === "Hybrid" ? "selected" : "" %>>Hybrid</option>
+                        </select>
+                    </div>
+
+                    <!-- Location -->
+                    <div class="mb-3">
+                        <label class="form-label">Location</label>
+                        <input type="text" name="event[location]" value="<%= event.location%>" class="form-control" >
+                    </div>
+
+                    <!-- Deadline -->
+                    <div class="mb-3">
+                        <label class="form-label">Application Deadline</label>
+                        <input type="date" name="event[deadline]" value="<%= event.deadline ? event.deadline.toISOString().split('T')[0] : '' %>" class="form-control" required>
+                        <div class="invalid-feedback">Deadline is required.</div>
+                    </div>
+
+                    <!-- Apply Link -->
+                    <div class="mb-3">
+                        <label class="form-label">Apply Link</label>
+                        <input type="text" name="event[applyLink]" value="<%= event.applyLink%>" class="form-control" required>
+                        <div class="invalid-feedback">Valid application link required.</div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea name="event[description]" class="form-control" rows="4"  required><%= event.description%></textarea>
+                        <div class="invalid-feedback">Description is required.</div>
+                    </div>
+
+                    <!-- Tags -->
+                    <div class="mb-3">
+                        <label class="form-label">Tags</label>
+                        <input type="text" name="event[tags]" class="form-control" value="<%= event.tags.join(', ')%>" required placeholder="web, ai, ml">
+                        <div class="form-text">Comma separated</div>
+                    </div>
+
+                    <!-- Image URL -->
+                    <div class="mb-3">
+                        <label class="form-label">Image URL</label>
+                        <input type="url" name="event[imageURL]" value="<%= event.imageURL%>" class="form-control">
+                    </div>
+
+                    <button class="btn btn-primary w-100" type="submit" >
+                        Edit Event
+                    </button>
+
+                </form>
+
+            </div>
+        </div>
+    </div>

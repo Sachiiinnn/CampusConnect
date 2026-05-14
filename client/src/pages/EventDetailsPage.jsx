@@ -4,11 +4,15 @@ import { FAQSection } from '../features/events/components/FAQSection';
 import { eventsApi } from '../features/events/services/eventsApi';
 import { Calendar, MapPin, Briefcase, ExternalLink, Edit, Trash2, Loader2, Building2, Linkedin, Copy } from 'lucide-react';
 import { toast } from 'sonner';
+import { useAuth } from '../features/auth/context/AuthContext';
 
 export function EventDetailsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { event, similarEvents, loading, error, refetch } = useEventDetails(id);
+  
+  // isAdmin checks if the logged in user is either 'admin' or 'super-admin'
+  const { isAdmin } = useAuth(); 
 
   if (loading) return <div className="flex justify-center items-center h-64"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
   if (error || !event) return <div className="text-center text-danger p-4 bg-danger/10 rounded-lg">{error || 'Event not found'}</div>;
@@ -90,14 +94,19 @@ export function EventDetailsPage() {
               Apply Now <ExternalLink className="ml-2 h-4 w-4" />
             </a>
             
-            <div className="flex gap-2 mb-6 border-b pb-6">
-              <Link to={`/events/${event._id}/edit`} className="flex-1 inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground">
-                <Edit className="mr-2 h-4 w-4" /> Edit
-              </Link>
-              <button onClick={handleDelete} className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-danger hover:bg-danger/10 hover:text-danger hover:border-danger/30">
-                <Trash2 className="h-4 w-4" />
-              </button>
-            </div>
+            {/* Conditional Rendering: Only show Edit/Delete if user is an Admin/SuperAdmin */}
+            {isAdmin ? (
+              <div className="flex gap-2 mb-6 border-b pb-6">
+                <Link to={`/events/${event._id}/edit`} className="flex-1 inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground">
+                  <Edit className="mr-2 h-4 w-4" /> Edit
+                </Link>
+                <button onClick={handleDelete} className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-danger hover:bg-danger/10 hover:text-danger hover:border-danger/30">
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            ) : (
+              <hr className="mb-6 border-border" />
+            )}
 
             <div className="space-y-4">
               <h3 className="font-semibold flex items-center gap-2"><Linkedin className="h-5 w-5 text-[#0A66C2]" /> Share on LinkedIn</h3>
